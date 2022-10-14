@@ -4,7 +4,6 @@ import { DAppProvider } from '@usedapp/core';
 
 import { GlobalStyle } from './providers/GlobalStyle';
 import { WalletConnectProvider } from './providers/WalletConnectProvider';
-import { LakeStatsProvider } from './providers/LakeStatsProvider';
 import { dappConfig } from './dapp-config';
 
 interface Props {
@@ -14,12 +13,10 @@ interface Props {
 export const Providers = ({ children }: Props) => (
     <DAppProvider config={dappConfig}>
         <WalletConnectProvider>
-            <LakeStatsProvider>
-                <BrowserRouter>
-                    <GlobalStyle />
-                    {children}
-                </BrowserRouter>
-            </LakeStatsProvider>
+            <BrowserRouter>
+                <GlobalStyle />
+                {children}
+            </BrowserRouter>
         </WalletConnectProvider>
     </DAppProvider>
 );

@@ -1,5 +1,4 @@
 import { createContext } from 'react';
-import { LakeStatsState } from '../hooks/use-lake-stats';
 import { WalletConnectState } from '../hooks/use-wallet-connect';
 
 export const WalletConnectContext = createContext<WalletConnectState>({
@@ -13,15 +12,4 @@ export const WalletConnectContext = createContext<WalletConnectState>({
     activateProvider: () => {},
     deactivate: () => {},
     activateBrowserWallet: () => {},
-});
-
-export const LakeStatsContext = createContext<LakeStatsState>({
-    marketCup: 0,
-    prevMarketCup: 0,
-    circulationSupply: 0,
-    prevCirculationSupply: 0,
-    lakePrice: 0,
-    prevLakePrice: 0,
-    consentsGathered: 0,
-    prevConsentsGathered: 0,
 });

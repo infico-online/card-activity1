@@ -1,25 +1,64 @@
 import CopyToClipboard from 'react-copy-to-clipboard';
 import styled from 'styled-components';
+import { JsonRpcProvider } from '@ethersproject/providers';
 import metamaskIcon from './../../assets/icons/metamask-icon.svg';
 import { ASSET_LAKE } from '../../constants/assets';
 import { colors } from '../../constants/colors';
 import { GradientButtonWithIcon } from '../button/gradient/GradientButtonWithIcon';
 import { formatValue } from '../../utils/formatValue';
-import { useContext } from 'react';
-import { LakeStatsContext } from '../../context';
+import { useContext, useEffect, useState } from 'react';
 import { StatElement } from './StatElement';
+import { useLakeStats } from '../../hooks/use-lake-stats';
+import { WalletConnectContext } from '../../context';
+
+export interface LakeStats {
+    marketCup: number;
+    prevMarketCup: number;
+    circulationSupply: number;
+    prevCirculationSupply: number;
+    lakePrice: number;
+    prevLakePrice: number;
+    consentsGathered: number;
+    prevConsentsGathered: number;
+}
+
+const zeroStats = {
+    marketCup: 0,
+    prevMarketCup: 0,
+    circulationSupply: 0,
+    prevCirculationSupply: 0,
+    lakePrice: 0,
+    prevLakePrice: 0,
+    consentsGathered: 0,
+    prevConsentsGathered: 0,
+};
+
+const REFRESH_STATS_INTERVAL = 180000;
 
 export const Stats = () => {
-    const {
-        marketCup,
-        prevMarketCup,
-        circulationSupply,
-        prevCirculationSupply,
-        lakePrice,
-        prevLakePrice,
-        consentsGathered,
-        prevConsentsGathered,
-    } = useContext(LakeStatsContext);
+    const [lakeStats, setLakeStats] = useState<LakeStats>(zeroStats);
+    const { library } = useContext(WalletConnectContext);
+
+    useEffect(() => {
+        const fetchData = async (library: JsonRpcProvider) => {
+            const state = await useLakeStats(library);
+            setLakeStats((prevState) => ({
+                ...state,
+                prevCirculationSupply: prevState.circulationSupply,
+                prevLakePrice: prevState.lakePrice,
+                prevMarketCup: prevState.marketCup,
+                prevConsentsGathered: prevState.consentsGathered,
+            }));
+        };
+
+        if (library) {
+            fetchData(library).catch(console.error);
+
+            setInterval(() => {
+                fetchData(library).catch(console.error);
+            }, REFRESH_STATS_INTERVAL);
+        }
+    }, []);
 
     const addToMetamask = async () => {
         try {
@@ -48,27 +87,31 @@ export const Stats = () => {
             <div className="w-full flex flex-col items-center justify-center">
                 <StatElement
                     title={'MARKET CAP'}
-                    currentValue={marketCup}
-                    prevValue={prevMarketCup}
-                    formattedValue={formatValue(marketCup, '$')}
+                    currentValue={lakeStats.marketCup}
+                    prevValue={lakeStats.prevMarketCup}
+                    formattedValue={formatValue(lakeStats.marketCup, '$')}
                 />
                 <StatElement
                     title={'CIRCULATION SUPPLY'}
-                    currentValue={circulationSupply}
-                    prevValue={prevCirculationSupply}
-                    formattedValue={formatValue(circulationSupply)}
+                    currentValue={lakeStats.circulationSupply}
+                    prevValue={lakeStats.prevCirculationSupply}
+                    formattedValue={formatValue(lakeStats.circulationSupply)}
                 />
                 <StatElement
                     title={'$LAKE PRICE'}
-                    currentValue={lakePrice}
-                    prevValue={prevLakePrice}
-                    formattedValue={formatValue(lakePrice, '$', 4)}
+                    currentValue={lakeStats.lakePrice}
+                    prevValue={lakeStats.prevLakePrice}
+                    formattedValue={formatValue(lakeStats.lakePrice, '$', 4)}
                 />
                 <StatElement
                     title={'CONSENTS GATHERED'}
-                    currentValue={consentsGathered}
-                    prevValue={prevConsentsGathered}
-                    formattedValue={formatValue(consentsGathered, '', 0)}
+                    currentValue={lakeStats.consentsGathered}
+                    prevValue={lakeStats.prevConsentsGathered}
+                    formattedValue={formatValue(
+                        lakeStats.consentsGathered,
+                        '',
+                        0,
+                    )}
                 />
             </div>
             <div className="w-full flex flex-col items-center justify-center px-4">
