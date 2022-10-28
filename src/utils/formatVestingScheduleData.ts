@@ -7,6 +7,7 @@ import {
 import { ASSET_LAKE } from '../constants/assets';
 import { IBeneficiaryOverview } from '../interfaces/beneficiaryOverview.interface';
 import { IVestingSchedule } from '../interfaces/vestingSchedule.interface';
+import { formatValue } from './formatValue';
 import { getTermsAsString } from './getTermsAsString';
 import { getUnlockedAmount } from './getUnlockedAmount';
 import { parseBigNumber } from './parseBigNumber';
@@ -16,24 +17,20 @@ export const formatVestingScheduleData = (
     tgeTimestamp: number,
 ): IVestingSchedule => {
     const { name } = beneficiaryOverview;
-    const terms = parseBigNumber(
-        beneficiaryOverview.terms,
-        ASSET_LAKE.decimals,
-    );
-    const cliff = parseBigNumber(
-        beneficiaryOverview.cliff,
-        ASSET_LAKE.decimals,
-    );
-    const duration = parseBigNumber(
-        beneficiaryOverview.duration,
-        ASSET_LAKE.decimals,
-    );
+    const terms = parseBigNumber(beneficiaryOverview.terms, 0);
+    const cliff = parseBigNumber(beneficiaryOverview.cliff, 0);
+    const duration = parseBigNumber(beneficiaryOverview.duration, 0);
     const allocatedAmount = parseBigNumber(
         beneficiaryOverview.allocatedAmount,
         ASSET_LAKE.decimals,
     );
-    const vestingRate = (allocatedAmount * terms) / duration;
-    const isUnlocked = isVestingScheduleUnlocked(cliff, duration, tgeTimestamp);
+    const vestingRate = allocatedAmount / duration;
+    const isUnlocked = isVestingScheduleUnlocked(
+        cliff,
+        duration,
+        terms,
+        tgeTimestamp,
+    );
     return {
         name,
         terms,
@@ -41,14 +38,14 @@ export const formatVestingScheduleData = (
         duration,
         durationLeft: isUnlocked
             ? 0
-            : getDurationLeft(cliff, duration, tgeTimestamp),
+            : getDurationLeft(cliff, duration, terms, tgeTimestamp),
         durationProgress: isUnlocked
             ? 100
-            : getDurationProgress(cliff, duration, tgeTimestamp),
+            : getDurationProgress(cliff, duration, terms, tgeTimestamp),
         vestingRate,
         vestingRateAsString: isUnlocked
             ? 'FULLY VESTED'
-            : `${vestingRate} $LAKE / ${getTermsAsString(terms)}`,
+            : `${formatValue(vestingRate)} $LAKE / ${getTermsAsString(terms)}`,
         unlockedAmount: isUnlocked
             ? allocatedAmount
             : getUnlockedAmount(cliff, terms, vestingRate, tgeTimestamp),

@@ -7,6 +7,7 @@ import {
 
 import { IVestingSchedule } from '../../../interfaces/vestingSchedule.interface';
 import { TabProgressBar } from '../../progressBar/TabProgressBar';
+import { formatValue } from '../../../utils/formatValue';
 
 interface Props {
     data: IVestingSchedule[];
@@ -47,7 +48,8 @@ const columns = [
         cell: (info) => (
             <>
                 <span className="text-center mb-2 text-sm">
-                    {info.getValue()} / {info.row.getValue('allocatedAmount')}
+                    {formatValue(info.getValue(), '', 0)} /{' '}
+                    {formatValue(info.row.getValue('allocatedAmount'), '', 0)}
                 </span>
                 <TabProgressBar
                     completed={
@@ -63,7 +65,8 @@ const columns = [
         cell: (info) => (
             <>
                 <span className="text-center mb-2 text-sm">
-                    {info.getValue()} / {info.row.getValue('allocatedAmount')}
+                    {formatValue(info.getValue(), '', 0)} /{' '}
+                    {formatValue(info.row.getValue('allocatedAmount'), '', 0)}
                 </span>
                 <TabProgressBar
                     completed={
@@ -84,7 +87,7 @@ const columns = [
         header: 'AMOUNT AVAILABLE',
         cell: (info) => (
             <span className="text-center text-sm text-gray-300">
-                {info.getValue()}
+                {formatValue(info.getValue(), '', 0)}
             </span>
         ),
     }),

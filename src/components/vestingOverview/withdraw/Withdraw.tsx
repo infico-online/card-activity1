@@ -8,6 +8,7 @@ import { GradientButtonWithSpinner } from '../../button/gradient/GradientButtonW
 import { IVestingSchedule } from '../../../interfaces/vestingSchedule.interface';
 import { WalletConnectContext } from '../../../context';
 import { colors } from '../../../constants/colors';
+import { formatValue } from '../../../utils/formatValue';
 import keyIcon from './../../../assets/icons/key-icon.svg';
 import logo from '../../../assets/icons/logo.svg';
 import styled from 'styled-components';
@@ -72,9 +73,19 @@ export const Withdraw = ({ data, isLoading, refresh }: Props) => {
                     <>
                         <div className="w-full flex flex-col items-center my-6">
                             <div className="flex flex-col text-gray-600">
-                                <div>
-                                    <span className="text-4xl tracking-[.1em]">
-                                        {Math.trunc(totalLocked)}
+                                <div className="flex items-end">
+                                    <span
+                                        className={`${
+                                            totalLocked >= 10 ** 6
+                                                ? 'text-2xl'
+                                                : 'text-4xl'
+                                        } tracking-[.1em]`}
+                                    >
+                                        {formatValue(
+                                            Math.trunc(totalLocked),
+                                            '',
+                                            0,
+                                        )}
                                     </span>
                                     <span className="tracking-[.1em]">
                                         {Math.abs(
@@ -97,9 +108,19 @@ export const Withdraw = ({ data, isLoading, refresh }: Props) => {
                                     alt="logo"
                                 ></img>
                                 <div className="flex flex-col">
-                                    <div>
-                                        <span className="text-4xl tracking-[.1em] color-gradient">
-                                            {Math.trunc(totalUnlocked)}
+                                    <div className="flex items-end">
+                                        <span
+                                            className={`${
+                                                totalLocked >= 10 ** 6
+                                                    ? 'text-2xl'
+                                                    : 'text-4xl'
+                                            } tracking-[.1em] color-gradient`}
+                                        >
+                                            {formatValue(
+                                                Math.trunc(totalUnlocked),
+                                                '',
+                                                0,
+                                            )}
                                         </span>
                                         <span className="tracking-[.1em] color-gradient">
                                             {Math.abs(
@@ -134,9 +155,11 @@ export const Withdraw = ({ data, isLoading, refresh }: Props) => {
                                         <GradientButton
                                             size="small"
                                             disabled={false}
-                                            text={`WITHDRAW ${
-                                                totalUnlocked - totalWithdrawn
-                                            } LAKE`}
+                                            text={`WITHDRAW ${formatValue(
+                                                totalUnlocked - totalWithdrawn,
+                                                '',
+                                                0,
+                                            )} LAKE`}
                                             onClick={onWithdrawClick}
                                         />
                                     )}

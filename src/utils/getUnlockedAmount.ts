@@ -4,9 +4,9 @@ export const getUnlockedAmount = (
     vestingRate: number,
     tgeTimestamp: number,
 ) => {
-    return (
-        Math.floor(
-            (new Date().getTime() / 1000 - tgeTimestamp - cliff) / terms,
-        ) * vestingRate
-    );
+    return new Date().getTime() / 1000 - tgeTimestamp - cliff > 0
+        ? Math.floor(
+              (new Date().getTime() / 1000 - tgeTimestamp - cliff) / terms,
+          ) * vestingRate
+        : 0;
 };
