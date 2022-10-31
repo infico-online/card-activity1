@@ -27,6 +27,9 @@ export const useConfig = () => {
         vestingScheduleAddress: import.meta.env.VITE_VESTING_SCHEDULE_ADDRESS,
         usdcLakePoolAddress: import.meta.env.VITE_USDC_LAKE_POOL_ADDRESS,
         usdcAddress: import.meta.env.VITE_USDC_ADDRESS,
+        etherscanBaseURL: `https://api${
+            chain === 'goerli' ? '-goerli' : ''
+        }.etherscan.io/api`,
         getDappConfig,
     };
 };

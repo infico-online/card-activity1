@@ -1,11 +1,14 @@
 import axios, { AxiosInstance } from 'axios';
+
 import { BigNumber } from 'ethers';
+import { useConfig } from '../hooks/use-config';
 
 export class EtherscanService {
     private instance: AxiosInstance;
     constructor() {
+        const { etherscanBaseURL } = useConfig();
         this.instance = axios.create({
-            baseURL: 'https://api.etherscan.io/api',
+            baseURL: etherscanBaseURL,
         });
     }
 
