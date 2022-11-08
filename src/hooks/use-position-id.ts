@@ -1,11 +1,12 @@
 import { Contract } from 'ethers';
+import { JsonRpcProvider } from '@ethersproject/providers';
 import { nonfungiblePositionManagerAbi } from '../abis/nonfungiblePositionManager';
 import { parseBigNumber } from '../utils/parseBigNumber';
 import { useConfig } from './use-config';
 
-export const useTokenIdOfPosition = async (
+export const usePositionId = async (
+    provider: JsonRpcProvider,
     account: string,
-    provider: any,
 ): Promise<number | undefined> => {
     try {
         const { usdtAddress, lakeAddress, nonfungiblePositionManagerAddress } =
@@ -33,14 +34,16 @@ export const useTokenIdOfPosition = async (
                 if (
                     position.token0.toLowerCase() ===
                         usdtAddress.toLowerCase() &&
-                    position.token1.toLowerCase() === lakeAddress.toLowerCase()
+                    position.token1.toLowerCase() ===
+                        lakeAddress.toLowerCase() &&
+                    position.liquidity > 0
                 ) {
                     return parseBigNumber(positionId, 0);
                 }
             }
         }
     } catch (e) {
-        console.error('Failed to get token id', e);
+        console.error('Failed to get position id', e);
     }
     return;
 };

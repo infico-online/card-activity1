@@ -1,13 +1,14 @@
 import { ASSET_LAKE, ASSET_USDT } from '../constants/assets';
 import { BigNumber, Contract } from 'ethers';
+import { CurrencyAmount, Percent, Token } from '@uniswap/sdk-core';
 import {
     NonfungiblePositionManager,
     Pool,
     Position,
     nearestUsableTick,
 } from '@uniswap/v3-sdk';
-import { Percent, Token } from '@uniswap/sdk-core';
 
+import { IPositionDetails } from '../interfaces/positionDetails.interface';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { PROVIDE_LIQUIDITY_DEADLINE } from '../constants/commons';
 import { uniswapV3PoolAbi } from '../abis/uniswapV3Pool';
@@ -99,10 +100,10 @@ export const useUniswap = (provider: JsonRpcProvider) => {
                 amount1: lakeAmount * 10 ** ASSET_LAKE.decimals,
                 tickLower:
                     nearestUsableTick(state.tick, immutables.tickSpacing) -
-                    immutables.tickSpacing,
+                    2 * immutables.tickSpacing,
                 tickUpper:
                     nearestUsableTick(state.tick, immutables.tickSpacing) +
-                    immutables.tickSpacing,
+                    2 * immutables.tickSpacing,
                 useFullPrecision: true,
             });
 
@@ -145,6 +146,74 @@ export const useUniswap = (provider: JsonRpcProvider) => {
         }
     };
 
+    const removeLiquidity = async (
+        account: string,
+        tokenId: number,
+        positionDetails: IPositionDetails,
+    ): Promise<void> => {
+        try {
+            const [immutables, state] = await Promise.all([
+                getPoolImmutables(poolContract),
+                getPoolState(poolContract),
+            ]);
+
+            const pool = new Pool(
+                usdt,
+                lake,
+                immutables.fee,
+                state.sqrtPriceX96.toString(),
+                state.liquidity.toString(),
+                state.tick,
+            );
+            const position = new Position({
+                pool,
+                ...positionDetails,
+            });
+
+            const deadline = (
+                (new Date().getTime() + PROVIDE_LIQUIDITY_DEADLINE) /
+                1000
+            )
+                .toFixed()
+                .toString();
+
+            const { calldata, value } =
+                NonfungiblePositionManager.removeCallParameters(position, {
+                    tokenId,
+                    liquidityPercentage: new Percent(1),
+                    slippageTolerance: new Percent(1),
+                    deadline,
+                    collectOptions: {
+                        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+                            usdt,
+                            0,
+                        ),
+                        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+                            lake,
+                            0,
+                        ),
+                        recipient: account,
+                    },
+                });
+
+            const txn: { to: string; data: string; value: string } = {
+                to: nonfungiblePositionManagerAddress,
+                data: calldata,
+                value,
+            };
+
+            const gasLimit = await provider.getSigner().estimateGas(txn);
+            const newTxn = {
+                ...txn,
+                gasLimit,
+            };
+            const resp = await provider.getSigner().sendTransaction(newTxn);
+            await resp.wait();
+        } catch (e) {
+            console.error('Failed to remove liquidity', e);
+        }
+    };
+
     const getPoolImmutables = async (
         poolContract: Contract,
     ): Promise<Immutables> => {
@@ -170,5 +239,6 @@ export const useUniswap = (provider: JsonRpcProvider) => {
     return {
         getLakePrice,
         provideLiquidity,
+        removeLiquidity,
     };
 };

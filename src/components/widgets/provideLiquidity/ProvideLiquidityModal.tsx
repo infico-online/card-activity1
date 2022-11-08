@@ -16,11 +16,12 @@ import { WalletConnectContext } from '../../../context';
 import cancelIcon from './../../../assets/icons/cancel-icon.svg';
 import { parseBigNumber } from '../../../utils/parseBigNumber';
 import { useConfig } from '../../../hooks/use-config';
-import { useTokenIdOfPosition } from '../../../hooks/use-token-id-of-position';
+import { usePositionId } from '../../../hooks/use-position-id';
 import { useUniswap } from '../../../hooks/use-uniswap';
 
 type Props = {
     isOpen: boolean;
+    refreshPositionData: () => void;
     closeModal: () => void;
 };
 
@@ -42,7 +43,11 @@ const customStyles = {
 
 ReactModal.setAppElement('#root');
 
-export const ProvideLiquidityModal = ({ isOpen, closeModal }: Props) => {
+export const ProvideLiquidityModal = ({
+    isOpen,
+    refreshPositionData,
+    closeModal,
+}: Props) => {
     const { account, library } = useContext(WalletConnectContext);
     const { usdtAddress, lakeAddress, nonfungiblePositionManagerAddress } =
         useConfig();
@@ -164,7 +169,7 @@ export const ProvideLiquidityModal = ({ isOpen, closeModal }: Props) => {
         if (library && account) {
             setIsLiquidityProviding(true);
             const { provideLiquidity } = useUniswap(library);
-            const tokenId = await useTokenIdOfPosition(account, library);
+            const tokenId = await usePositionId(library, account);
             await provideLiquidity(
                 usdtInputValue,
                 lakeInputValue,
@@ -174,6 +179,7 @@ export const ProvideLiquidityModal = ({ isOpen, closeModal }: Props) => {
             setIsLiquidityProviding(false);
             setLakeInputValue(0);
             setUsdtInputValue(0);
+            refreshPositionData();
         }
     };
 

@@ -60,7 +60,7 @@ export const TokenInput = ({
                             !isValueValid && 'text-red-600'
                         }`}
                     >
-                        = {formatValue(inputValue * tokenPrice, '$', 0)}
+                        = {formatValue(inputValue * tokenPrice, '$', 2)}
                     </span>
                 </div>
             </div>
