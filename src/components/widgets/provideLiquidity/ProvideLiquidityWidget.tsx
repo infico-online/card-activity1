@@ -8,6 +8,7 @@ import { IPositionDetails } from '../../../interfaces/positionDetails.interface'
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { ProvideLiquidityModal } from './ProvideLiquidityModal';
 import { StakingModal } from './staking/StakingModal';
+import { UnstakingModal } from './staking/UstakingModal';
 import { WalletConnectContext } from '../../../context';
 import { formatValue } from '../../../utils/formatValue';
 import { parseBigNumber } from '../../../utils/parseBigNumber';
@@ -23,6 +24,7 @@ export const ProvideLiquidityWidget = () => {
     const [isProvideLiquidityModalOpen, setIsProvideLiquidityModalOpen] =
         useState(false);
     const [isStakingModalOpen, setIsStakingModalOpen] = useState(false);
+    const [isUnstakingModalOpen, setIsUnstakingModalOpen] = useState(false);
     const [lakeBalance, setLakeBalance] = useState(0);
     const [lpTokenBalance, setLpTokenBalance] = useState(0);
     const [stakedBalance, setStakedBalance] = useState(0);
@@ -31,7 +33,6 @@ export const ProvideLiquidityWidget = () => {
         IPositionDetails | undefined
     >(undefined);
     const [isLiquidityRemoving, setIsLiquidityRemoving] = useState(false);
-    const [isUnstaking, setIsUnstaking] = useState(false);
     const [refreshPositionData, setRefreshPositionData] = useState(0);
     const [refreshStakingData, setRefreshStakingData] = useState(0);
     const lakeBalanceAsBigNumber = useTokenBalance(lakeAddress, account);
@@ -100,12 +101,11 @@ export const ProvideLiquidityWidget = () => {
     };
 
     const onUnstakeClick = async () => {
-        if (library && account && stakedBalance > 0) {
-            setIsUnstaking(true);
-            //unstaking
-            setRefreshStakingData(new Date().getTime());
-            setIsUnstaking(false);
-        }
+        setIsUnstakingModalOpen(true);
+    };
+
+    const closeUnstakingModal = () => {
+        setIsUnstakingModalOpen(false);
     };
 
     const onRemoveLiquidityClick = async () => {
@@ -173,16 +173,24 @@ export const ProvideLiquidityWidget = () => {
             )}
             {stakedBalance > 0 && (
                 <div className="w-full flex flex-col items-center mt-8">
-                    {isUnstaking ? (
-                        <ButtonWithSpinner size="medium" disabled={true} />
-                    ) : (
-                        <Button
-                            size="medium"
-                            disabled={false}
-                            text="LP TOKENS UNSTAKING"
-                            onClick={onUnstakeClick}
-                        />
-                    )}
+                    <Button
+                        size="medium"
+                        disabled={false}
+                        text="LP TOKENS UNSTAKING"
+                        onClick={onUnstakeClick}
+                    />
+                    <span className="text-sm tracking-[.1em] my-2">
+                        {formatValue(stakedBalance, ASSET_LP_TOKEN.symbol, 0)}{' '}
+                        TOKENS STAKED
+                    </span>
+                    <UnstakingModal
+                        isOpen={isUnstakingModalOpen}
+                        stakedBalance={stakedBalance}
+                        closeModal={closeUnstakingModal}
+                        refreshStakingData={() => {
+                            setRefreshStakingData(new Date().getTime());
+                        }}
+                    />
                 </div>
             )}
         </div>
