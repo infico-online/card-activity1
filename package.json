@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@ramonak/react-progress-bar": "^5.0.3",
+    "@ramp-network/ramp-instant-sdk": "^4.0.0",
     "@tanstack/react-table": "^8.5.15",
     "@uniswap/sdk-core": "^3.1.0",
     "@uniswap/v3-core": "^1.0.1",

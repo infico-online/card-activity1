@@ -1,6 +1,7 @@
 import { ReactNode, useContext, useState } from 'react';
 
 import { Button } from '../button/Button';
+import { BuyWidget } from './buy/BuyWidget';
 import { GradientButton } from '../button/gradient/GradientButton';
 import { GradientButtonWithIcon } from '../button/gradient/GradientButtonWithIcon';
 import { ProvideLiquidityWidget } from './provideLiquidity/ProvideLiquidityWidget';
@@ -27,9 +28,9 @@ const defaultWidgetsState = [
         component: <SwapCustomWidget />,
     },
     {
-        name: 'BUY $LAKE',
+        name: 'BUY CRYPTO',
         isOpen: false,
-        component: <div className="w-full flex justify-center my-20">TBD</div>,
+        component: <BuyWidget />,
     },
 ];
 
