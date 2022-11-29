@@ -10,14 +10,13 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Button } from '../../button/Button';
 import { ClipLoader } from 'react-spinners';
+import { ConnectWallet } from '../../connectWallet/ConnectWallet';
 import { GradientButton } from '../../button/gradient/GradientButton';
-import { GradientButtonWithIcon } from '../../button/gradient/GradientButtonWithIcon';
 import { GradientButtonWithSpinner } from '../../button/gradient/GradientButtonWithSpinner';
 import { IVestingSchedule } from '../../../interfaces/vestingSchedule.interface';
 import { WalletConnectContext } from '../../../context';
 import { colors } from '../../../constants/colors';
 import { formatValue } from '../../../utils/formatValue';
-import keyIcon from './../../../assets/icons/key-icon.svg';
 import logo from '../../../assets/icons/lake-logo.svg';
 import { useClaimTokensTransaction } from '../../../hooks/use-claim-tokens-transaction';
 
@@ -28,8 +27,7 @@ interface Props {
 }
 
 export const Withdraw = ({ data, isLoading, refresh }: Props) => {
-    const { library, account, activateProvider } =
-        useContext(WalletConnectContext);
+    const { library, account } = useContext(WalletConnectContext);
     const [isClaiming, setIsClaiming] = useState(false);
     const [transactionStatus, setTransactionStatus] = useState<
         Status | undefined
@@ -78,16 +76,12 @@ export const Withdraw = ({ data, isLoading, refresh }: Props) => {
         }
     };
 
-    const activate = async () => {
-        await activateProvider();
-    };
-
     return (
         <>
             <div className="w-full bg-black-700 rounded-[30px] inset-shadow relative">
                 <div
                     className={`w-full flex flex-col items-center justify-between px-8 py-6 overflow-auto ${
-                        account ? '' : 'blur-sm'
+                        account ? '' : 'blur-sm pointer-events-none'
                     }`}
                 >
                     <div className="w-full flex justify-center font-kanit-medium color-gray-gradient text-shadow text-base tracking-[.12em]">
@@ -199,18 +193,7 @@ export const Withdraw = ({ data, isLoading, refresh }: Props) => {
                         </>
                     )}
                 </div>
-                {!account && (
-                    <div className="absolute top-[50%] left-[6%]">
-                        <GradientButtonWithIcon
-                            size="medium"
-                            disabled={false}
-                            text="CONNECT WALLET"
-                            onClick={activate}
-                        >
-                            <img src={keyIcon} alt="key"></img>
-                        </GradientButtonWithIcon>
-                    </div>
-                )}
+                {!account && <ConnectWallet />}
             </div>
             {transactionStatus && (
                 <div className="w-full bg-black-700 rounded-[30px] inset-shadow mt-6 flex flex-col">

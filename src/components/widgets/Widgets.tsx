@@ -2,13 +2,12 @@ import { ReactNode, useContext, useState } from 'react';
 
 import { Button } from '../button/Button';
 import { BuyWidget } from './buy/BuyWidget';
+import { ConnectWallet } from '../connectWallet/ConnectWallet';
 import { GradientButton } from '../button/gradient/GradientButton';
-import { GradientButtonWithIcon } from '../button/gradient/GradientButtonWithIcon';
 import { ProvideLiquidityWidget } from './provideLiquidity/ProvideLiquidityWidget';
 import { SwapCustomWidget } from './swap/SwapCustomWidget';
 import { WalletConnectContext } from '../../context';
 import { WidgetBody } from './WidgetBody';
-import keyIcon from './../../assets/icons/key-icon.svg';
 
 interface Widget {
     name: string;
@@ -35,12 +34,8 @@ const defaultWidgetsState = [
 ];
 
 export const Widgets = () => {
-    const { account, activateProvider } = useContext(WalletConnectContext);
+    const { account } = useContext(WalletConnectContext);
     const [widgets, setWidgets] = useState<Widget[]>(defaultWidgetsState);
-
-    const activate = async () => {
-        await activateProvider();
-    };
 
     const onWidgetClick = (id: number) => {
         setWidgets(
@@ -55,7 +50,7 @@ export const Widgets = () => {
         <div className="w-full h-full bg-black-700 rounded-[42px] inset-shadow relative">
             <div
                 className={`w-full h-full flex flex-col items-center px-20 pt-12 ${
-                    account ? '' : 'blur-sm'
+                    account ? '' : 'blur-sm pointer-events-none'
                 }`}
             >
                 <div className="w-full flex justify-between">
@@ -85,18 +80,7 @@ export const Widgets = () => {
                     ))}
                 </div>
             </div>
-            {!account && (
-                <div className="absolute top-[50%] left-[41%]">
-                    <GradientButtonWithIcon
-                        size="medium"
-                        disabled={false}
-                        text="CONNECT WALLET"
-                        onClick={activate}
-                    >
-                        <img src={keyIcon} alt="key"></img>
-                    </GradientButtonWithIcon>
-                </div>
-            )}
+            {!account && <ConnectWallet />}
         </div>
     );
 };

@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { ASSET_LAKE } from '../../constants/assets';
 import { AccountMetric } from './AccountMetric';
-import { GradientButtonWithIcon } from '../button/gradient/GradientButtonWithIcon';
+import { ConnectWallet } from '../connectWallet/ConnectWallet';
 import { IBeneficiaryOverview } from '../../interfaces/beneficiaryOverview.interface';
 import { IVestingSchedule } from '../../interfaces/vestingSchedule.interface';
 import { JsonRpcProvider } from '@ethersproject/providers';
@@ -11,7 +11,6 @@ import { REFRESH_LAKE_PRICE_INTERVAL } from '../../constants/commons';
 import { WalletConnectContext } from '../../context';
 import dropIcon from '../../assets/icons/drop-icon.svg';
 import { formatVestingScheduleData } from '../../utils/formatVestingScheduleData';
-import keyIcon from '../../assets/icons/key-icon.svg';
 import lockClosedIcon from '../../assets/icons/lock-closed-icon.svg';
 import lockOpenIcon from '../../assets/icons/lock-open-icon.svg';
 import { parseBigNumber } from '../../utils/parseBigNumber';
@@ -23,8 +22,7 @@ import { useTgeTimestamp } from '../../hooks/use-tge-timestamp';
 import { useTokenBalance } from '@usedapp/core';
 
 export const AccountOverview = () => {
-    const { account, library, activateProvider } =
-        useContext(WalletConnectContext);
+    const { account, library } = useContext(WalletConnectContext);
     const { lakeAddress } = useConfig();
     const [lakeBalance, setLakeBalance] = useState(0);
     const [lakePrice, setLakePrice] = useState(0);
@@ -103,15 +101,11 @@ export const AccountOverview = () => {
         setTotalAllocated(allocated);
     }, [vestingSchedules]);
 
-    const activate = async () => {
-        await activateProvider();
-    };
-
     return (
         <div className="w-full h-full bg-black-800 rounded-[42px] inset-shadow relative">
             <div
                 className={`w-full h-full flex flex-col items-center px-16 py-10 ${
-                    account ? '' : 'blur-sm'
+                    account ? '' : 'blur-sm pointer-events-none'
                 }`}
             >
                 <div className="w-full font-kanit-medium color-gray-gradient text-shadow text-3xl tracking-[.12em] mb-7">
@@ -159,18 +153,7 @@ export const AccountOverview = () => {
                     </div>
                 </div>
             </div>
-            {!account && (
-                <div className="absolute top-[50%] left-[37%]">
-                    <GradientButtonWithIcon
-                        size="medium"
-                        disabled={false}
-                        text="CONNECT WALLET"
-                        onClick={activate}
-                    >
-                        <img src={keyIcon} alt="key"></img>
-                    </GradientButtonWithIcon>
-                </div>
-            )}
+            {!account && <ConnectWallet />}
         </div>
     );
 };

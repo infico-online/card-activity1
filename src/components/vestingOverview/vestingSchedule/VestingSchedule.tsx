@@ -1,10 +1,9 @@
 import { ClipLoader } from 'react-spinners';
-import { GradientButtonWithIcon } from '../../button/gradient/GradientButtonWithIcon';
+import { ConnectWallet } from '../../connectWallet/ConnectWallet';
 import { IVestingSchedule } from '../../../interfaces/vestingSchedule.interface';
 import { ScheduleTab } from './ScheduleTab';
 import { WalletConnectContext } from '../../../context';
 import { colors } from '../../../constants/colors';
-import keyIcon from './../../../assets/icons/key-icon.svg';
 import { useContext } from 'react';
 
 interface Props {
@@ -13,16 +12,12 @@ interface Props {
 }
 
 export const VestingSchedule = ({ data, isLoading }: Props) => {
-    const { account, activateProvider } = useContext(WalletConnectContext);
-
-    const activate = async () => {
-        await activateProvider();
-    };
+    const { account } = useContext(WalletConnectContext);
     return (
         <div className="w-full h-full bg-black-700 rounded-[30px] inset-shadow relative">
             <div
                 className={`w-full h-full flex flex-col items-center px-4 ${
-                    account ? '' : 'blur-sm'
+                    account ? '' : 'blur-sm pointer-events-none'
                 }`}
             >
                 <div className="w-full flex justify-start py-12 px-6">
@@ -40,18 +35,7 @@ export const VestingSchedule = ({ data, isLoading }: Props) => {
                     )}
                 </div>
             </div>
-            {!account && (
-                <div className="absolute top-[50%] left-[37%]">
-                    <GradientButtonWithIcon
-                        size="medium"
-                        disabled={false}
-                        text="CONNECT WALLET"
-                        onClick={activate}
-                    >
-                        <img src={keyIcon} alt="key"></img>
-                    </GradientButtonWithIcon>
-                </div>
-            )}
+            {!account && <ConnectWallet />}
         </div>
     );
 };
