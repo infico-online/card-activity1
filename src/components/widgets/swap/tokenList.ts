@@ -1,9 +1,7 @@
 import { ASSET_LAKE } from '../../../constants/assets';
 import { useConfig } from '../../../hooks/use-config';
 
-const { lakeAddress } = useConfig();
-
-const testnetStable = process.env.REACT_APP_USDT_ADDRESS
+const { lakeAddress, usdtAddress } = useConfig();
 
 export const tokens = [
 
@@ -68,7 +66,7 @@ export const tokens = [
         address: lakeAddress,
         symbol: ASSET_LAKE.symbol,
         decimals: ASSET_LAKE.decimals,
-        chainId: 420,
+        chainId: 5,
         logoURI: ASSET_LAKE.image,
     },
     {
@@ -84,7 +82,7 @@ export const tokens = [
         name: 'DAI',
         decimals: 18,
         symbol: 'DAI',
-        address: testnetStable,
+        address: usdtAddress,
         chainId: 5,
         logoURI:
             'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
@@ -93,7 +91,7 @@ export const tokens = [
         name: 'USD Tether',
         decimals: 6,
         symbol: 'USDT',
-        address: testnetStable,
+        address: usdtAddress,
         chainId: 5,
         logoURI:
             'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
@@ -102,7 +100,7 @@ export const tokens = [
         name: 'USD Coin',
         decimals: 6,
         symbol: 'USDC',
-        address: testnetStable,
+        address: usdtAddress,
         chainId: 5,
         logoURI:
             'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png',
@@ -111,7 +109,7 @@ export const tokens = [
         name: 'Binance USD',
         decimals: 18,
         symbol: 'BUSD',
-        address: testnetStable,
+        address: usdtAddress,
         chainId: 5,
         logoURI:
             'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x4Fabb145d64652a948d72533023f6E7A623C7C53/logo.png',
