@@ -36,11 +36,25 @@ export const BuyWidget = () => {
                 <GradientButton
                     size="medium"
                     disabled={false}
+                    text="OTC TRADE DESK"
+                    onClick={() =>
+                        window.open(
+                            'https://forms.gle/GdRfnSwVBA7H71VDA',
+                            '_blank',
+                            'noreferrer',
+                        )
+                    }
+                />
+            </div>
+            <div className="mt-6">
+                <GradientButton
+                    size="medium"
+                    disabled={false}
                     text="BUY ETH"
                     onClick={() => openTransak('ETH')}
                 />
             </div>
-            <div className="mt-8">
+            <div className="mt-6">
                 <GradientButton
                     size="medium"
                     disabled={false}
@@ -48,7 +62,7 @@ export const BuyWidget = () => {
                     onClick={() => openTransak('USDC')}
                 />
             </div>
-            <div className="mt-8">
+            <div className="mt-6">
                 <GradientButton
                     size="medium"
                     disabled={false}
@@ -56,7 +70,7 @@ export const BuyWidget = () => {
                     onClick={() => openTransak('USDT')}
                 />
             </div>
-            <div className="mt-8">
+            <div className="mt-6">
                 <GradientButton
                     size="medium"
                     disabled={false}
