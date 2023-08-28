@@ -16,7 +16,7 @@ export const Dashboard = () => {
                     <Stats />
                 </div>
             </div>
-            <div className="hidden lg:block w-full h-[760px] py-6">
+            <div className="hidden lg:block w-full h-[670px] py-6">
                 <Widgets />
             </div>
             <div className="w-full h-auto lg:h-[630px] mt-4 lg:mt-0 lg:py-6">
